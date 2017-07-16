@@ -1,20 +1,15 @@
-import { Author } from './connectors';
+import { Author, View } from './connectors';
 
 const resolvers = {
   Query: {
-    author(_, args) {
-      return Author.find({ where: args });
-    },
+    author: (root, args) => Author.find({ where: args }),
   },
   Author: {
-    posts(author) {
-      return author.getPosts();
-    },
+    posts: author => author.getPosts(),
   },
   Post: {
-    author(post) {
-      return post.getAuthor();
-    },
+    author: post => post.getAuthor(),
+    views: post => View.findOne({ postId: post.id }).then(view => view.views),
   },
 };
 
