@@ -2,6 +2,7 @@ import Sequelize from 'sequelize';
 import casual from 'casual';
 import _ from 'lodash';
 import Mongoose from 'mongoose';
+import fetch from 'node-fetch';
 
 const db = new Sequelize('blog', null, null, {
   dialect: 'sqlite',
@@ -25,8 +26,6 @@ const ViewSchema = Mongoose.Schema({
   postId: Number,
   views: Number,
 });
-
-const View = Mongoose.model('views', ViewSchema);
 
 AuthorModel.hasMany(PostModel);
 PostModel.belongsTo(AuthorModel);
@@ -53,7 +52,14 @@ db.sync({ force: true }).then(() => {
   });
 });
 
+const FortuneCookie = {
+  getOne: () => fetch('http://fortunecookieapi.herokuapp.com/v1/cookie')
+    .then(res => res.json())
+    .then(res => res[0].fortune.message),
+};
+
 const Author = db.models.author;
 const Post = db.models.post;
+const View = Mongoose.model('views', ViewSchema);
 
-export { Author, Post, View };
+export { Author, Post, View, FortuneCookie };
